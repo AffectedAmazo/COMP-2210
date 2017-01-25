@@ -303,9 +303,66 @@ public class SelectorTest {
 
    @Test public void ceilingTypicalCases() {
    
+      int[] a = {1,2,3};
+      int[] b = {1,2,3,4};
+      int[] c = {1,2,3,4,5};
+   
+      Assert.assertEquals(2, Selector.ceiling(a, 2));
+      Assert.assertEquals(3, Selector.ceiling(b, 3));
+      Assert.assertEquals(4, Selector.ceiling(c, 4));
    }
 
    @Test public void ceilingSpecialCases() {
    
+      int[] a = {1,1,1};
+      int[] b = {3,2,4,1};
+      int[] c = {1,2,2,3};
+   
+      Assert.assertEquals(1, Selector.ceiling(a, 1));
+      Assert.assertEquals(4, Selector.ceiling(b, 4));
+      Assert.assertEquals(2, Selector.ceiling(c, 2));
    }
+   
+   @Test (expected = IllegalArgumentException.class) public void floorIllegalCases() {
+   
+      int[] a = null;
+      int[] b = {};
+      
+      Selector.floor(a, 1);
+      Selector.floor(b, 1);
+   }
+
+   @Test public void floorBoundaryCases() {
+   
+      int[] a = {1};
+      int[] b = {1,2};
+      int[] c = {1,2};
+   
+      Assert.assertEquals(1, Selector.floor(a, 1));
+      Assert.assertEquals(2, Selector.floor(b, 2));
+      Assert.assertEquals(2, Selector.floor(c, 3));
+   }
+
+   @Test public void floorTypicalCases() {
+   
+      int[] a = {1,2,3};
+      int[] b = {1,2,3,4};
+      int[] c = {1,2,3,4,5};
+   
+      Assert.assertEquals(2, Selector.floor(a, 2));
+      Assert.assertEquals(3, Selector.floor(b, 3));
+      Assert.assertEquals(5, Selector.floor(c, 8));
+   }
+
+   @Test public void floorSpecialCases() {
+   
+      int[] a = {1,1,1};
+      int[] b = {3,2,4,1};
+      int[] c = {1,2,2,3};
+   
+      Assert.assertEquals(1, Selector.floor(a, 1));
+      Assert.assertEquals(4, Selector.floor(b, 4));
+      Assert.assertEquals(2, Selector.floor(c, 2));
+   }
+
 }

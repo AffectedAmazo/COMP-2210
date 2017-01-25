@@ -281,4 +281,31 @@ public class SelectorTest {
       Assert.assertEquals(cAnswer.length, Selector.range(c, 3, 3).length);
    }
 
+   @Test (expected = IllegalArgumentException.class) public void ceilingIllegalCases() {
+   
+      int[] a = null;
+      int[] b = {};
+      
+      Selector.ceiling(a, 1);
+      Selector.ceiling(b, 1);
+   }
+
+   @Test public void ceilingBoundaryCases() {
+   
+      int[] a = {1};
+      int[] b = {1,2};
+      int[] c = {1,2};
+   
+      Assert.assertEquals(1, Selector.ceiling(a, 1));
+      Assert.assertEquals(2, Selector.ceiling(b, 2));
+      Assert.assertEquals(1, Selector.ceiling(c, 0));
+   }
+
+   @Test public void ceilingTypicalCases() {
+   
+   }
+
+   @Test public void ceilingSpecialCases() {
+   
+   }
 }

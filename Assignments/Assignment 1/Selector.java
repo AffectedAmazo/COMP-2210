@@ -84,7 +84,7 @@ public final class Selector {
    
       Arrays.sort(a);
       
-      //count number of unique numbers
+      //counts number of unique numbers
       int duplicateCount = 0;
       int uniqueTotal = 0;
       for (int i = 0; i < a.length - 1; i++) {
@@ -99,7 +99,7 @@ public final class Selector {
          throw new IllegalArgumentException("k must be less than the unique number count");
       }
       
-      //create array with only unique numbers of length uniqueTotal
+      //creates copy array with only unique numbers of length uniqueTotal
       int j = 0;
       int i = 1;
       int[] b = Arrays.copyOf(a, a.length);
@@ -154,11 +154,12 @@ public final class Selector {
       
       uniqueTotal = a.length - duplicateCount;
       
+      //if k is greater than the number of unique values
       if (k > uniqueTotal) {
          throw new IllegalArgumentException("k must be less than the unique number count");
       }
       
-      //create array with only unique numbers of length uniqueTotal
+      //creates array with only unique numbers of length uniqueTotal
       int j = 0;
       int i = 1;
       int[] b = Arrays.copyOf(a, a.length);
@@ -198,9 +199,11 @@ public final class Selector {
          throw new IllegalArgumentException("must be an array of at least 1 integer");
       }
    
+      //make copy of the original
       int[] b = Arrays.copyOf(a, a.length);
       int j = 0;
-   
+      
+      //rewrite copy so that the values within the range are listed first in the array
       for(int i = 0; i < a.length; i++) {
          if (a[i] >= low && a[i] <= high)
          {
@@ -209,11 +212,12 @@ public final class Selector {
          }
       }
       
+      //if no values in the array fall within the range
       if (j == 0) {
          int[] c = {};
          return c;
       }
-      
+      //if values fall within the range
       else {
          int[] d = Arrays.copyOf(b, j);
          return d;
@@ -229,7 +233,34 @@ public final class Selector {
     * The array a is not changed by this method.
     */
    public static int ceiling(int[] a, int key) {
-      return -99;
+   
+      int ceiling = 0;
+      int change = 0;
+   
+      //if a is null or has a length of 0
+      if (a == null || a.length == 0) {
+         throw new IllegalArgumentException("must be an array of at least 1 integer");
+      }
+      
+      //loop used to initiate the ceiling value as above the max of the array
+      for (int i = 0; i < a.length; i++) {
+         ceiling += Math.abs(a[i]);
+      }
+      
+      //finds the lowest value equal to or above the key
+      for (int i = 0; i < a.length; i++){
+         if (a[i] >= key && a[i] <= ceiling) {
+            ceiling = a[i];
+            change++;
+         }
+      }
+      
+      //if no qualifying value for ceiling
+      if (change == 0) {
+         throw new IllegalArgumentException("there is no qualifying value in the array");
+      }
+      
+      return ceiling;
    }
 
 
@@ -241,7 +272,35 @@ public final class Selector {
     * The array a is not changed by this method.
     */
    public static int floor(int[] a, int key) {
-      return -99;
+      
+      int floor = 0;
+      int change = 0;
+   
+      //if a is null or has a length of 0
+      if (a == null || a.length == 0) {
+         throw new IllegalArgumentException("must be an array of at least 1 integer");
+      }
+      
+      //loop used to initiate the ceiling value as above the max of the array
+      for (int i = 0; i < a.length; i++) {
+         floor -= Math.abs(a[i]);
+      }
+      
+      //finds the highest value equal to or above the key
+      for (int i = 0; i < a.length; i++){
+         if (a[i] <= key && a[i] >= floor) {
+            floor = a[i];
+            change++;
+         }
+      }
+      
+      //if no qualifying value for floor
+      if (change == 0) {
+         throw new IllegalArgumentException("there is no qualifying value in the array");
+      }
+      
+      return floor;
+   
    }
 
 }

@@ -40,10 +40,18 @@ public final class Selector {
    
       Iterator<T> itr = coll.iterator(); 
    
-      if (coll == null || coll.isEmpty()) {
+      //checks if collection is null or empty, comp is null
+      if (coll == null || comp == null) {
          throw new IllegalArgumentException("must be an"
             + " array of at least 1 integer");
       }
+      
+      if (coll.isEmpty()) {
+      
+         throw new NoSuchElementException("must be a"
+            + " collection that is not empty");
+      }
+      
       T min = itr.next();
       
       if (itr.hasNext()) {
@@ -74,12 +82,21 @@ public final class Selector {
     * @throws        NoSuchElementException as per above
     */
    public static <T> T max(Collection<T> coll, Comparator<T> comp) {
+      
       Iterator<T> itr = coll.iterator(); 
    
-      if (coll == null || coll.isEmpty()) {
+      //checks if collection is null or empty, comp is null
+      if (coll == null || comp == null) {
          throw new IllegalArgumentException("must be an"
             + " array of at least 1 integer");
       }
+      
+      if (coll.isEmpty()) {
+      
+         throw new NoSuchElementException("must be a"
+            + " collection that is not empty");
+      }
+      
       T max = itr.next();
       
       if (itr.hasNext()) {
@@ -113,20 +130,23 @@ public final class Selector {
     */
    public static <T> T kmin(Collection<T> coll, int k, Comparator<T> comp) {
    
-   //creates iterator
-      Iterator<T> itr = coll.iterator();
-   
-   //checks if collection is null or empty
-      if (coll == null || coll.isEmpty()) {
+     //checks if collection is null or empty, comp is null
+      if (coll == null || comp == null) {
          throw new IllegalArgumentException("must be an"
             + " array of at least 1 integer");
+      }
+      
+      //checks if collection is empty
+      if (coll.isEmpty()) {
+         throw new NoSuchElementException("must be a"
+            + " collection that is not empty");
       }
       
       //creates arraylist of collection and sorts it
       List<T> copyList = new ArrayList(coll);
       java.util.Collections.sort(copyList, comp);
       
-      //if k < 0 or k > the array length
+      //checks if k < 0 or k > the array length
       if (k > copyList.size() || k <= 0) {
          throw new IllegalArgumentException("k - 1 must be"
             + " a value within the array set");
@@ -134,44 +154,41 @@ public final class Selector {
       
       //counts number of unique numbers
       int duplicateCount = 0;
-      int uniqueTotal = 0;
-      
-      T start = itr.next();
-      
-      for (T element: coll) {
-         T current = itr.next();
-         if (comp.compare(start, current) == 0) {
+      int uniqueTotal = 0; 
+      for (int i = 0; i < copyList.size() - 1; i++) {
+         if (copyList.get(i) == copyList.get(i + 1)) {
             duplicateCount++;
          }
       }
-      
+     
+     //finds length of the new list of just uniques
       uniqueTotal = copyList.size() - duplicateCount;
       
+      //checks if k is greater than number of uniques
       if (k > uniqueTotal) {
          throw new IllegalArgumentException("k must be"
             + " less than the unique number count");
       }
       
-      //creates copy array with only unique numbers of length uniqueTotal
-      /*int[] c = Arrays.copyOf(b, b.length);
-      int j = 0;
+      //chagnes copyList to only unique numbers of length uniqueTotal
+      for (int i = copyList.size() - 1; i > uniqueTotal - 1; i--) {
+         copyList.remove(i);
+      }
       int i = 1;
-      
-   
-      while (i < c.length) {
-         if (c[i] == c[j]) {
+      int j = 0;
+      while (i < copyList.size()) {
+         if (copyList.get(i) == copyList.get(j)) {
             i++;
-         } 
+         }
+         
          else {
             j++;
-            c[j] = c[i];
+            copyList.set(j, copyList.get(i));
             i++;
          }
       }
    
-      int kmin = c[k - 1];*/
-   
-      return null;
+      return copyList.get(k-1);
    }
 
 
@@ -190,7 +207,66 @@ public final class Selector {
     * @throws        NoSuchElementException as per above
     */
    public static <T> T kmax(Collection<T> coll, int k, Comparator<T> comp) {
-      return null;
+   
+     //checks if collection is null or empty, comp is null
+      if (coll == null || comp == null) {
+         throw new IllegalArgumentException("must be an"
+            + " array of at least 1 integer");
+      }
+      
+      //checks if collection is empty
+      if (coll.isEmpty()) {
+         throw new NoSuchElementException("must be a"
+            + " collection that is not empty");
+      }
+      
+      //creates arraylist of collection and sorts it
+      List<T> copyList = new ArrayList(coll);
+      java.util.Collections.sort(copyList, comp);
+      
+      //checks if k < 0 or k > the array length
+      if (k > copyList.size() || k <= 0) {
+         throw new IllegalArgumentException("k - 1 must be"
+            + " a value within the array set");
+      }
+      
+      //counts number of unique numbers
+      int duplicateCount = 0;
+      int uniqueTotal = 0; 
+      for (int i = 0; i < copyList.size() - 1; i++) {
+         if (copyList.get(i) == copyList.get(i + 1)) {
+            duplicateCount++;
+         }
+      }
+     
+     //finds length of the new list of just uniques
+      uniqueTotal = copyList.size() - duplicateCount;
+      
+      //checks if k is greater than number of uniques
+      if (k > uniqueTotal) {
+         throw new IllegalArgumentException("k must be"
+            + " less than the unique number count");
+      }
+      
+      //changes copylist to only unique numbers of length uniqueTotal
+      for (int i = copyList.size() - 1; i > uniqueTotal - 1; i--) {
+         copyList.remove(i);
+      }
+      int i = 1;
+      int j = 0;
+      while (i < copyList.size()) {
+         if (copyList.get(i) == copyList.get(j)) {
+            i++;
+         }
+         
+         else {
+            j++;
+            copyList.set(j, copyList.get(i));
+            i++;
+         }
+      }
+   
+      return copyList.get(uniqueTotal - k);
    }
 
 
@@ -259,3 +335,4 @@ public final class Selector {
    }
 
 }
+

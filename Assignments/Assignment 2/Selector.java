@@ -8,9 +8,9 @@ import java.util.NoSuchElementException;
 /**
  * Defines a library of selection methods on Collections.
  *
- * @author  Your Name (you@auburn.edu)
+ * @author  Grant Haislip (gzh0020@auburn.edu)
  * @author  Dean Hendrix (dh@auburn.edu)
- * @version 2017-01-30
+ * @version 2017-02-05
  *
  */
 public final class Selector {
@@ -32,13 +32,12 @@ public final class Selector {
     *
     * @param coll    the Collection from which the minimum is selected
     * @param comp    the Comparator that defines the total order on T
+    * @param <T>     the general data type used
     * @return        the minimum value in coll
     * @throws        IllegalArgumentException as per above
     * @throws        NoSuchElementException as per above
     */
    public static <T> T min(Collection<T> coll, Comparator<T> comp) {
-   
-      Iterator<T> itr = coll.iterator(); 
    
       //checks if collection is null or empty, comp is null
       if (coll == null || comp == null) {
@@ -51,14 +50,14 @@ public final class Selector {
          throw new NoSuchElementException("must be a"
             + " collection that is not empty");
       }
-      
+     
+      Iterator<T> itr = coll.iterator(); 
       T min = itr.next();
       
       if (itr.hasNext()) {
       
          for (T element: coll) {
-            if (comp.compare(element, min) < 0)
-            {
+            if (comp.compare(element, min) < 0) {
                min = element;
             }
          }
@@ -77,14 +76,13 @@ public final class Selector {
     *
     * @param coll    the Collection from which the maximum is selected
     * @param comp    the Comparator that defines the total order on T
+    * @param <T>     the general data type used
     * @return        the maximum value in coll
     * @throws        IllegalArgumentException as per above
     * @throws        NoSuchElementException as per above
     */
    public static <T> T max(Collection<T> coll, Comparator<T> comp) {
       
-      Iterator<T> itr = coll.iterator(); 
-   
       //checks if collection is null or empty, comp is null
       if (coll == null || comp == null) {
          throw new IllegalArgumentException("must be an"
@@ -96,14 +94,13 @@ public final class Selector {
          throw new NoSuchElementException("must be a"
             + " collection that is not empty");
       }
-      
+      Iterator<T> itr = coll.iterator();
       T max = itr.next();
       
       if (itr.hasNext()) {
       
          for (T element: coll) {
-            if (comp.compare(element, max) > 0)
-            {
+            if (comp.compare(element, max) > 0) {
                max = element;
             }
          }
@@ -124,6 +121,7 @@ public final class Selector {
     * @param coll    the Collection from which the kth minimum is selected
     * @param k       the k-selection value
     * @param comp    the Comparator that defines the total order on T
+    * @param <T>     the general data type used
     * @return        the kth minimum value in coll
     * @throws        IllegalArgumentException as per above
     * @throws        NoSuchElementException as per above
@@ -148,47 +146,31 @@ public final class Selector {
       
       //checks if k < 0 or k > the array length
       if (k > copyList.size() || k <= 0) {
-         throw new IllegalArgumentException("k - 1 must be"
+         throw new NoSuchElementException("k - 1 must be"
             + " a value within the array set");
       }
-      
-      //counts number of unique numbers
+           
+      //counts number of unique and duplicate numbers, removes duplicate
       int duplicateCount = 0;
-      int uniqueTotal = 0; 
+      int uniqueTotal = 0;
+      int originalTotal = copyList.size();
       for (int i = 0; i < copyList.size() - 1; i++) {
-         if (copyList.get(i) == copyList.get(i + 1)) {
+         while (copyList.size() > 1 && i < copyList.size() - 1
+            && copyList.get(i) == copyList.get(i + 1)) {
+            copyList.remove(i);
             duplicateCount++;
          }
       }
-     
-     //finds length of the new list of just uniques
-      uniqueTotal = copyList.size() - duplicateCount;
       
-      //checks if k is greater than number of uniques
+      uniqueTotal = originalTotal - duplicateCount;
+      
+      //if k is greater than the number of unique values
       if (k > uniqueTotal) {
-         throw new IllegalArgumentException("k must be"
-            + " less than the unique number count");
+         throw new NoSuchElementException("k must be"
+               + " less than the unique number count");
       }
       
-      //chagnes copyList to only unique numbers of length uniqueTotal
-      for (int i = copyList.size() - 1; i > uniqueTotal - 1; i--) {
-         copyList.remove(i);
-      }
-      int i = 1;
-      int j = 0;
-      while (i < copyList.size()) {
-         if (copyList.get(i) == copyList.get(j)) {
-            i++;
-         }
-         
-         else {
-            j++;
-            copyList.set(j, copyList.get(i));
-            i++;
-         }
-      }
-   
-      return copyList.get(k-1);
+      return copyList.get(k - 1);
    }
 
 
@@ -202,6 +184,7 @@ public final class Selector {
     * @param coll    the Collection from which the kth maximum is selected
     * @param k       the k-selection value
     * @param comp    the Comparator that defines the total order on T
+    * @param <T>     the general data type used
     * @return        the kth maximum value in coll
     * @throws        IllegalArgumentException as per above
     * @throws        NoSuchElementException as per above
@@ -226,46 +209,30 @@ public final class Selector {
       
       //checks if k < 0 or k > the array length
       if (k > copyList.size() || k <= 0) {
-         throw new IllegalArgumentException("k - 1 must be"
+         throw new NoSuchElementException("k - 1 must be"
             + " a value within the array set");
       }
       
-      //counts number of unique numbers
+      //counts number of unique and duplicate numbers, removes duplicates
       int duplicateCount = 0;
-      int uniqueTotal = 0; 
+      int uniqueTotal = 0;
+      int originalTotal = copyList.size();
       for (int i = 0; i < copyList.size() - 1; i++) {
-         if (copyList.get(i) == copyList.get(i + 1)) {
+         while (copyList.size() > 1 && i < copyList.size() - 1
+            && copyList.get(i) == copyList.get(i + 1)) {
+            copyList.remove(i);
             duplicateCount++;
          }
       }
-     
-     //finds length of the new list of just uniques
-      uniqueTotal = copyList.size() - duplicateCount;
       
-      //checks if k is greater than number of uniques
+      uniqueTotal = originalTotal - duplicateCount;
+      
+      //if k is greater than the total number of unique values
       if (k > uniqueTotal) {
-         throw new IllegalArgumentException("k must be"
-            + " less than the unique number count");
+         throw new NoSuchElementException("k must be"
+               + " less than the unique number count");
       }
-      
-      //changes copylist to only unique numbers of length uniqueTotal
-      for (int i = copyList.size() - 1; i > uniqueTotal - 1; i--) {
-         copyList.remove(i);
-      }
-      int i = 1;
-      int j = 0;
-      while (i < copyList.size()) {
-         if (copyList.get(i) == copyList.get(j)) {
-            i++;
-         }
-         
-         else {
-            j++;
-            copyList.set(j, copyList.get(i));
-            i++;
-         }
-      }
-   
+            
       return copyList.get(uniqueTotal - k);
    }
 
@@ -285,13 +252,53 @@ public final class Selector {
     * @param low     the lower bound of the range
     * @param high    the upper bound of the range
     * @param comp    the Comparator that defines the total order on T
+    * @param <T>     the general data type used
     * @return        a Collection of values between low and high
     * @throws        IllegalArgumentException as per above
     * @throws        NoSuchElementException as per above
     */
    public static <T> Collection<T> range(Collection<T> coll, T low, T high,
                                          Comparator<T> comp) {
-      return null;
+      
+      if (coll == null || comp == null) {
+         throw new IllegalArgumentException("must be an"
+            + " array of at least 1 integer");
+      }
+      
+      //checks if collection is empty
+      if (coll.isEmpty()) {
+         throw new NoSuchElementException("must be a"
+            + " collection that is not empty");
+      }
+      
+      //makes arraylist of the original and arraylist for the range
+      //set j for number of qualifying values
+      List<T> copyList = new ArrayList(coll);
+      List<T> range = new ArrayList(coll);
+      int j = 0;
+      
+      /*rewrite copy so that the values within
+      the range are listed first in the array*/
+      for (int i = 0; i < copyList.size(); i++) {
+         if ((comp.compare(copyList.get(i), low) >= 0)
+            && (comp.compare(copyList.get(i), high) <= 0)) {
+            range.set(j, copyList.get(i));
+            j++;
+         }
+      }
+      
+      //if no values in the arraylist fall within the range
+      if (j == 0) {
+         throw new NoSuchElementException("the collection must"
+            + " have values within the range");
+      }
+      
+      //delete extra values on end of range
+      for (int i = range.size() - 1; i > j - 1; i--) {
+         range.remove(i);
+      }
+      
+      return range;
    }
 
 
@@ -306,12 +313,55 @@ public final class Selector {
     * @param coll    the Collection from which the ceiling value is selected
     * @param key     the reference value
     * @param comp    the Comparator that defines the total order on T
+    * @param <T>     the general data type used
     * @return        the ceiling value of key in coll
     * @throws        IllegalArgumentException as per above
     * @throws        NoSuchElementException as per above
     */
    public static <T> T ceiling(Collection<T> coll, T key, Comparator<T> comp) {
-      return null;
+   
+      //if a is null or has a length of 0
+      if (coll == null || comp == null) {
+         throw new IllegalArgumentException("must be"
+            + " an array of at least 1 integer"); 
+      }
+      
+      if (coll.isEmpty()) {
+         throw new NoSuchElementException("can't be an empty coll");
+      }
+      
+      //finds maximum value
+      Iterator<T> itr = coll.iterator();
+      T ceiling = itr.next();
+      if (itr.hasNext()) {
+      
+         for (T element: coll) {
+            if (comp.compare(element, ceiling) > 0) {
+               ceiling = element;
+            }
+         }
+      
+      }
+      
+      int change = 0;
+      
+      //finds the lowest value equal to or above the key
+      for (T element: coll) {
+         if ((comp.compare(element, key) >= 0)
+            && (comp.compare(element, ceiling) <= 0)) {
+            ceiling = element;
+            change++;
+         }
+      }
+      
+      
+      //if no qualifying value for ceiling
+      if (change == 0) {
+         throw new NoSuchElementException("there is"
+            + " no qualifying value in the coll");
+      }
+      
+      return ceiling;
    }
 
 
@@ -326,13 +376,57 @@ public final class Selector {
     * @param coll    the Collection from which the floor value is selected
     * @param key     the reference value
     * @param comp    the Comparator that defines the total order on T
+    * @param <T>     the general data type used
     * @return        the floor value of key in coll
     * @throws        IllegalArgumentException as per above
     * @throws        NoSuchElementException as per above
     */
    public static <T> T floor(Collection<T> coll, T key, Comparator<T> comp) {
-      return null;
+      //if a is null or has a length of 0
+      if (coll == null || comp == null) {
+         throw new IllegalArgumentException("must be"
+            + " an coll of at least 1 integer");
+      }
+      if (coll.isEmpty()) {
+         throw new NoSuchElementException("can't be an exmpy coll");
+      }
+      
+      
+      //finds minimum value
+      Iterator<T> itr = coll.iterator();
+      T floor = itr.next();
+      if (itr.hasNext()) {
+      
+         for (T element: coll) {
+            if (comp.compare(element, floor) < 0) {
+               floor = element;
+            }
+         }
+      
+      }
+      
+      
+      int change = 0;
+      
+      //finds the lowest value equal to or above the key
+      for (T element: coll) {
+         if ((comp.compare(element, key) <= 0)
+            && (comp.compare(element, floor) >= 0)) {
+            floor = element;
+            change++;
+         }
+      }
+      
+      
+      //if no qualifying value for ceiling
+      if (change == 0) {
+         throw new NoSuchElementException("there is"
+            + " no qualifying value in the coll");
+      }
+      
+      return floor;
    }
 
 }
+
 

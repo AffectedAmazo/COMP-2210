@@ -29,7 +29,13 @@ public class Line implements Comparable<Line>, Iterable<Point> {
     * Collection c.
     */
    public Line(Collection<Point> c) {
-      line = new TreeSet<Point>(c);
+      line = new TreeSet<Point>();
+      
+      Iterator<Point> itr = c.iterator();
+      
+      while (itr.hasNext()) {
+         add(itr.next());
+      }
    }
  
    /** 
@@ -39,21 +45,23 @@ public class Line implements Comparable<Line>, Iterable<Point> {
     */
    public boolean add(Point p) {
    
+      
       if (line.contains(p)) {
          return false;
       }
       
-      if (line.size() > 1) {
-         double slope1 = line.last().slopeTo(line.first());
-         double slope2 = line.last().slopeTo(p);
-      
-         if (slope1 != slope2) {
-            return false;
-         }
+      else if (line.isEmpty()) {
+         line.add(p);
+         return true;
       }
       
-      line.add(p);
-      return true;
+      else {
+         if (line.first().slopeTo(p) == line.last().slopeTo(p)) {
+            line.add(p);
+            return true;
+         }
+         return false;
+      }
    }
    
    /** 
@@ -99,14 +107,14 @@ public class Line implements Comparable<Line>, Iterable<Point> {
    @Override
    public int compareTo(Line that) {
    
-      if (line.first() == null) {
-         if (that.first() == null) {
+      if (line.size() == 0) {
+         if (that.length() == 0) {
             return 0;
          }
          return -1;
       }
       
-      else if (that.first() == null) {
+      else if (that.length() == 0) {
          return 1;
       }
       
@@ -137,8 +145,7 @@ public class Line implements Comparable<Line>, Iterable<Point> {
     */
    @Override
    public Iterator<Point> iterator() {
-      //not type safe
-      Iterator iterator;
+      Iterator<Point> iterator;
       iterator = line.iterator();
    
       return iterator;

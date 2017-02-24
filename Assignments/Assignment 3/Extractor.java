@@ -26,7 +26,6 @@ public class Extractor {
     * Builds an extractor based on the points in the file named by filename. 
     */
    public Extractor(String filename) {
-      //not type safe
       File file = new File("filename");
       Scanner scan = new Scanner(System.in);
       
@@ -67,6 +66,32 @@ public class Extractor {
     */
    public SortedSet<Line> getLinesBrute() {
       lines = new TreeSet<Line>();
+      
+      Point[] result = Arrays.copyOf(points, points.length);
+      
+      for (int i = 3; i < result.length; i++) {
+      
+         for (int j = 2; j < i; j++) {
+            for (int k = 1; k < j; k++) {
+               for (int l = 0; l < k; l++) {
+                  double slope1 = result[i].slopeTo(result[j]);
+                  double slope2 = result[i].slopeTo(result[k]);
+                  double slope3 = result[i].slopeTo(result[l]);
+               
+                  if (slope1 == slope2 && slope2 == slope3) {
+                     Line newLine = new Line();
+                     newLine.add(result[i]);
+                     newLine.add(result[j]);
+                     newLine.add(result[k]);
+                     newLine.add(result[l]);
+                     
+                     lines.add(newLine);
+                  }
+               }
+            }
+         }
+      }
+      
       return lines;
    }
   

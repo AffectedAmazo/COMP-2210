@@ -12,7 +12,6 @@ import java.util.TreeSet;
  *
  */
 public class Line implements Comparable<Line>, Iterable<Point> {
- 
    SortedSet<Point> line;
    
    /** 
@@ -27,6 +26,7 @@ public class Line implements Comparable<Line>, Iterable<Point> {
    /** 
     * Creates a new line with containing all distinct collinear points in the
     * Collection c.
+    * @param c is a collection of points.
     */
    public Line(Collection<Point> c) {
       line = new TreeSet<Point>();
@@ -42,6 +42,8 @@ public class Line implements Comparable<Line>, Iterable<Point> {
     * Adds the point p to this line if p is collinear with all points already
     * in the line and p itself is not already in the line. Returns true if this
     * line is changed as a result, false otherwise.
+    * @param p is a point.
+    * @return false if point isnt added and true if is.
     */
    public boolean add(Point p) {
    
@@ -67,6 +69,7 @@ public class Line implements Comparable<Line>, Iterable<Point> {
    /** 
     * Returns the first (minimum) point in this line or null if this line
     * contains no points.
+    * @return the minimum point on this line.
     */
    public Point first() {
    
@@ -79,6 +82,7 @@ public class Line implements Comparable<Line>, Iterable<Point> {
    /** 
     * Returns the last (maximum) point in this line or null if this line
     * contains no points.
+    * @return the maximum point in this line.
     */
    public Point last() {
    
@@ -90,6 +94,7 @@ public class Line implements Comparable<Line>, Iterable<Point> {
    
    /** 
     * Returns the number of points in this line.
+    * @return number of points on line.
     */
    public int length() {
       return line.size();
@@ -179,8 +184,10 @@ public class Line implements Comparable<Line>, Iterable<Point> {
       if ((this.length() != 0) && (that.length() == 0)) {
          return false;
       }
-      return (this.first().equals(that.first())) && (this.last().equals(that.last()));
+      return (this.first().equals(that.first()))
+         && (this.last().equals(that.last()));
    }
+  
  
    /** 
     * Return a string representation of this line.

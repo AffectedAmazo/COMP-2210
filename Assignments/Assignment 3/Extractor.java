@@ -23,30 +23,32 @@ public class Extractor {
    private SortedSet<Line> lines;
   
    /**
-    * Builds an extractor based on the points in the file named by filename. 
+    * Builds an extractor based on the points in the file named by filename.
+    * @param filename is the name of the file.
     */
    public Extractor(String filename) {
-      File file = new File("filename");
-      Scanner scan = new Scanner(System.in);
-      
+   
       try {
-         scan = new Scanner(file);
+      
+         Scanner scan = new Scanner(new File(filename));
+      
+         int length = scan.nextInt();
+         points = new Point[length];
+         int i = 0;
+      
+         while (scan.hasNext()) {
+            int x = scan.nextInt();
+            int y = scan.nextInt();
+            Point element = new Point(x, y);
+            points[i] = element;
+            i++;
+         }
       }
       catch (Exception e) {
-         System.out.println(e + "File could not be scanned");
+         System.out.println("File could not be scanned");
       }
       
-      int length = Integer.parseInt(scan.nextLine());
-      Point[] line = new Point[length];
       
-      int i = 0;
-      while (scan.hasNext()) {
-         int x = Integer.parseInt(scan.next());
-         int y = Integer.parseInt(scan.next());
-         Point element = new Point(x, y);
-         line[i] = element;
-         i++;
-      }
       
    }
   
@@ -54,6 +56,7 @@ public class Extractor {
     * Builds an extractor based on the points in the Collection named by pcoll. 
     *
     * THIS METHOD IS PROVIDED FOR YOU AND MUST NOT BE CHANGED.
+    * @param pcoll is a collection of points.
     */
    public Extractor(Collection<Point> pcoll) {
       points = pcoll.toArray(new Point[]{});
@@ -63,9 +66,11 @@ public class Extractor {
     * Returns a sorted set of all line segments of exactly four collinear
     * points. Uses a brute-force combinatorial strategy. Returns an empty set
     * if there are no qualifying line segments.
+    * @return lines is all the collinear lines in the set.
     */
    public SortedSet<Line> getLinesBrute() {
       lines = new TreeSet<Line>();
+      Iterator itr = lines.iterator();
       
       Point[] result = Arrays.copyOf(points, points.length);
       
@@ -100,9 +105,42 @@ public class Extractor {
     * points. The line segments are maximal; that is, no sub-segments are
     * identified separately. A sort-and-scan strategy is used. Returns an empty
     * set if there are no qualifying line segments.
+    * @return lines is all the collinear lines in the set.
     */
    public SortedSet<Line> getLinesFast() {
       lines = new TreeSet<Line>();
+      Iterator itr = lines.iterator();
+      
+      Point[] copy = Arrays.copyOf(points, points.length);
+      
+      for (int n = 0; n < points.length; n++) {
+         
+         
+         Arrays.sort(copy, points[n].slopeOrder);
+         
+         int equalSlopes = 0;
+         
+         for (int j = 0; j < points.length - 1; j = j + equalSlopes) {
+            equalSlopes = 0;
+            int i = 0;
+            while (j + i < points.length
+               && points[n].slopeOrder.compare(copy[j], copy[j + i]) == 0) {
+               i++;
+               equalSlopes++;
+            }
+            
+            if (equalSlopes > 2) {
+               Line newLine = new Line();
+               newLine.add(points[n]);
+               for (int k = 0; k < equalSlopes; k++) {
+                  newLine.add(copy[j + k]);
+               }
+               
+               lines.add(newLine);
+            }
+         }
+      }
+         
       return lines;
    }
    

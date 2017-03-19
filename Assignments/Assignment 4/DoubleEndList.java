@@ -23,30 +23,49 @@ public class DoubleEndList<T> implements DoubleEndedList<T> {
 
    public void addLast(T element) {
    
-      /*Node n = new Node(element);
+      Node n = new Node(element);
+      T end = null;
    
       while(iterator().hasNext()) {
-         T end = iterator().next();
+         end = iterator().next();
       }
    
       Node last = new Node(end);
    
-      end.next = n;
-      n = end;
-   
-      size++;*/   
+      last.next = n;
+      n = last;
+      size++;
    }
 
    public T removeFirst() {
    
+      if (size == 0) {
+         return null;
+      }
+      T deleted = front.element;
+      front = front.next;
+      size--;
    
-   
-      return null;
+      return deleted;
    }
 
    public T removeLast() {
    
-      return null;
+      if (size == 0) {
+         return null;
+      }
+      
+      T deleted = null;
+      
+      while(iterator().hasNext()) {
+         deleted = iterator().next();
+      }
+      
+      Node last = new Node(deleted);
+      last = null;
+      size--;
+         
+      return deleted;
    }
 
    public int size() {
@@ -56,7 +75,7 @@ public class DoubleEndList<T> implements DoubleEndedList<T> {
 
    public Iterator<T> iterator() {
    
-      return new Iteration();
+      return new Iteration(front, size);
    }
 
    public boolean isEmpty() {
@@ -84,7 +103,16 @@ public class DoubleEndList<T> implements DoubleEndedList<T> {
    
    private class Iteration implements Iterator<T> {
    
-      private Node current = front;
+      private Node current;
+      private int count;
+      private Node start;
+      
+      Iteration(Node n, int amount) {
+      
+         current = front;
+         count = amount;
+         start = n;
+      }
    
       public T next() {
       

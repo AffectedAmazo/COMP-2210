@@ -1,10 +1,10 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 public class DoubleEndList<T> implements DoubleEndedList<T> {
 
    private Node front;
+   private Node last;
    private int size;
    
    public DoubleEndList() {
@@ -15,25 +15,45 @@ public class DoubleEndList<T> implements DoubleEndedList<T> {
 
    public void addFirst(T element) {
    
+      if (element == null) {
+         throw new IllegalArgumentException();
+      }
+   
       Node n = new Node(element);
-      n.next = front;
-      front = n;
+      
+      if (size() == 0) {
+      
+         front = n;
+         last = n;
+      }
+      
+      else {
+         n.next = front;
+         front = n;
+      }
+      
       size++;  
    }
 
    public void addLast(T element) {
    
-      Node n = new Node(element);
-      T end = null;
-   
-      while(iterator().hasNext()) {
-         end = iterator().next();
+      if (element == null) {
+         throw new IllegalArgumentException();
       }
    
-      Node last = new Node(end);
-   
-      last.next = n;
-      n = last;
+      Node n = new Node(element);
+      n.element = element;
+      
+      if (size == 0) {
+         front = n;
+         last = n;
+      }
+      
+      else {
+         last.next = n;
+         last = n;
+      }
+      
       size++;
    }
 
@@ -42,6 +62,7 @@ public class DoubleEndList<T> implements DoubleEndedList<T> {
       if (size == 0) {
          return null;
       }
+      
       T deleted = front.element;
       front = front.next;
       size--;
@@ -55,17 +76,30 @@ public class DoubleEndList<T> implements DoubleEndedList<T> {
          return null;
       }
       
-      T deleted = null;
+      else if (size == 1) {
       
-      while(iterator().hasNext()) {
-         deleted = iterator().next();
+         T deleted = front.element;
+         front = null;
+         last = null;
+         size--;
+         return deleted;
       }
       
-      Node last = new Node(deleted);
-      last = null;
-      size--;
-         
-      return deleted;
+      else {
+         Node n = front;
+      
+         while (n.next.next != null) {
+            n = n.next;
+         }
+      
+      
+         T deleted = n.next.element;
+         n.next = null;
+         last = n;
+         size--;
+         return deleted;
+      }
+      
    }
 
    public int size() {
@@ -75,7 +109,7 @@ public class DoubleEndList<T> implements DoubleEndedList<T> {
 
    public Iterator<T> iterator() {
    
-      return new Iteration(front, size);
+      return new Iteration();
    }
 
    public boolean isEmpty() {
@@ -103,16 +137,7 @@ public class DoubleEndList<T> implements DoubleEndedList<T> {
    
    private class Iteration implements Iterator<T> {
    
-      private Node current;
-      private int count;
-      private Node start;
-      
-      Iteration(Node n, int amount) {
-      
-         current = front;
-         count = amount;
-         start = n;
-      }
+      private Node current = front;
    
       public T next() {
       
@@ -137,3 +162,4 @@ public class DoubleEndList<T> implements DoubleEndedList<T> {
    }
 
 }
+

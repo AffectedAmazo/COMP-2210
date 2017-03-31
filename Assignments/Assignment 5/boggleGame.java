@@ -94,18 +94,4 @@ public class boggleGame implements WordSearchGame {
       return null;
    }
    
-   /*private class Node {
-   
-      private String letter;
-      private Node left;
-      private Node right;
-      private Node up;
-      private Node down;
-      private Node diagLeftDown;
-      private Node diagRightDown;
-      private Node diagLeftUp;
-      private Node diagRightUp;
-   
-   }*/
-   
 }

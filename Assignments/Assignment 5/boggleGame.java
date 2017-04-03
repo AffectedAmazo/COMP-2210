@@ -15,6 +15,9 @@ public class BoggleGame implements WordSearchGame {
    TreeSet<String> validWords;
    boolean lexiconLoaded = false;
    int wordLength;
+   boolean[][] visited;
+   List<Integer> path;
+   List<Integer> finalPath;
 
    public void loadLexicon(String fileName) {
    
@@ -48,17 +51,25 @@ public class BoggleGame implements WordSearchGame {
       if (letterArray == null || Math.sqrt(letterArray.length) % 1 != 0) {
          throw new IllegalArgumentException("letterArray is not a square");
       }
+      
    
       dimension = (int) Math.sqrt(letterArray.length);
       board = new String[dimension][dimension];
+      visited = new boolean[dimension][dimension];
+      
+      path = new ArrayList<Integer>();
+      finalPath = new ArrayList<Integer>();
+      validWords = new TreeSet();
       
       int n = 0;
+      int count = 0;
       
-      for (String[] s: board) { //changed
-         for (int i = 0; i < dimension; i++) {
-            s[i] = letterArray[i * (n + 1)];
+      for (int i = 0; i < dimension; i++) { //changed
+         for (int j = 0; j < dimension; j++) {
+            board[i][j] = letterArray[count];
+            visited[i][j] = false;
+            count++;
          }
-         n++;
       }
    
    }
@@ -88,10 +99,25 @@ public class BoggleGame implements WordSearchGame {
          throw new IllegalStateException("Must load lexicon");
       }
    
-      validWords = new TreeSet();
+      
+      /*
       for (int i = 0; i < dimension; i++) {
          for (int j = 0; j < dimension; j++) {
             wordSearch(j, i, ""); //changed
+         }
+      }*/
+      
+      /*for(String s: lexicon) {
+         if (isOnBoard(s).size() > 0) {
+            validWords.add(s);
+         }
+      }*/
+      
+      for(int i=0 ; i < dimension ; i++)
+      {
+         for(int j=0 ; j < dimension ; j++)
+         {
+            findWord(board[i][j], i, j);
          }
       }
    
@@ -155,10 +181,9 @@ public class BoggleGame implements WordSearchGame {
       }
    
    //start from end, use get neighbors, check if it contains right letter. recursion
-      List<Integer> path = new ArrayList<Integer>();
-      List<Integer> emptyList = new ArrayList<Integer>();
       
-      if (wordToCheck.length() - 1 < 0) {
+      
+      /*if (wordToCheck.length() - 1 < 0) {
          Collections.reverse(path);
          return path;
       }
@@ -183,6 +208,14 @@ public class BoggleGame implements WordSearchGame {
    
       String[] options = getNeighbors(x, y);
       
+      if (options.length == 0) {
+         if (isValidWord(wordToCheck)) {
+            int value = (y * dimension) + x;
+            path.add(value);
+            return path;
+         }
+      }
+      
       for (String s: options) {
          if (s == check) {
             int value = (y * dimension) + x;
@@ -191,11 +224,48 @@ public class BoggleGame implements WordSearchGame {
             //added
             isOnBoard(wordToCheck);
          }
+      }*/
+      
+      /*for (int i = 0; i < board.length; i++) {
+         for (int j = 0; j < board.length; j++) {
+            /*if (this.findWord(wordToCheck, i, j)) {
+               int value = i * (j + 1);
+               path.add(value);
+               return path;
+            }
+            
+            findWord("", i, j);
+         }
       }
       
-      return emptyList;
+      return path;
+      
+      //return emptyList;*/
+      
+      path.clear();
+      finalPath.clear();
+   	
+      for(int i = 0; i< dimension; i++)
+      {	
+         for(int j = 0; j< dimension; j++)
+         {
+            if(board[i][j].charAt(0)== wordToCheck.charAt(0)) 
+            {
+               path.add((i * dimension) + j);
+               recursive(wordToCheck,board[i][j],i,j);
+               if (!finalPath.isEmpty()) 
+                  return finalPath;
+               path.clear();
+               finalPath.clear();
+            }
+         }
+      }
+      return path;
+      
+      
    }
    
+         
    private String[] getNeighbors(int x, int y) {
    
       String[] neighbors = new String[1000];
@@ -282,4 +352,80 @@ public class BoggleGame implements WordSearchGame {
       }
    }
    
+   private void findWord(String word, int i, int j) {
+      /*String start = "" + word.charAt(0);
+      if (row < 0 || row >= board.length || col < 0 || col >= board.length ||
+      board[row][col] != start) {
+         return false;
+      }
+      
+      String safe = board[row][col];
+      //board[row][col] = "";
+      String rest = word.substring(1, word.length());
+      boolean result = this.findWord(rest, row-1, col-1) ||
+                             this.findWord(rest, row-1,   col) ||
+                             this.findWord(rest, row-1, col+1) ||
+                             this.findWord(rest,   row, col-1) ||
+                             this.findWord(rest,   row, col+1) ||
+                             this.findWord(rest, row+1, col-1) ||
+                             this.findWord(rest, row+1,   col) ||
+                             this.findWord(rest, row+1, col+1);
+                             
+      board[row][col] = safe;
+      return result;*/
+      
+      if (i < 0 || j < 0 || i >= dimension || j >= dimension) {
+         return;
+      }
+      
+      if (visited[i][j]) {
+         return;
+      }
+      
+      visited[i][j] = true;
+      
+      word = word + board[i][j];
+      if (lexicon.contains(word)) {
+         validWords.add(word);
+      }
+      
+      for (int x = -1; x <= 1; x++) {
+         for (int y = -1; y <= 1; y++) {
+            findWord(word, i + x, j + y);
+         }
+      }
+      
+      visited[i][j] = false;
+   }
+   
+   public void recursive(String wordToCheck, String word, int x, int y){
+      visited[x][y]=true;
+      if (!(isValidPrefix(word)))
+         return;
+      if (word.equals(wordToCheck)){
+         finalPath = new ArrayList(path);
+         return;
+      }
+      for(int i=-1;i<=1;i++)
+      {	
+         for (int j=-1;j<=1;j++)
+         {
+            if(word.equals(wordToCheck)) 
+               return;
+            if((x+i)<=(dimension-1) && (y+j)<=(dimension-1)
+            && (x+i)>=0 && (y+j)>=0 && !visited[x+i][y+j]) //(!outOfBounds(x,y,i,j))
+            {
+               visited[x+i][y+j]=true;
+               path.add((x+i)*(int)dimension+y+j);
+               recursive(wordToCheck,word+board[x+i][y+j],x+i,y+j);
+               visited[x+i][y+j]=false;
+               path.remove(path.size()-1);
+            }
+         }
+      }
+      visited[x][y]=false;
+      return;
+   }
+   
 }
+

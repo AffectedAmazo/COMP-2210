@@ -51,7 +51,7 @@ public class Boggle implements WordSearchGame {
             lineScanner = new Scanner(line);
             lineScanner.useDelimiter(" ");
             while (lineScanner.hasNext()) {
-               lexicon.add(lineScanner.next());
+               lexicon.add(lineScanner.next().toLowerCase());
             }
          
          }

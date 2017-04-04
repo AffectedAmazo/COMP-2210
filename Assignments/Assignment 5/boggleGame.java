@@ -1,19 +1,21 @@
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Set;
 import java.util.List;
 import java.util.Scanner;
-import java.util.SortedSet;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
+/**
+* This program is for the word game Boggle
+* COMP 2210 - Assignment 5
+* @author Grant Haislip
+* @versoin 4/3/2017
+*/
 public class Boggle implements WordSearchGame
 {
 		
    private TreeSet<String> dictionary; 
-	//private Set foundSet;
    private List<Integer> path;
    private List<Integer> finalPath;
    private String[] dict;
@@ -21,18 +23,18 @@ public class Boggle implements WordSearchGame
    private String[][] board;
    private Boolean[][]tries;
    private SortedSet<String> validList;
-        //private String[] letters;
    private List<String> resultSet;
    private int minLength;
    private boolean lexiconLoaded;
 
+/**
+* The constructor for Boggle
+*/
    public Boggle(){
       path = new ArrayList<Integer>();
       finalPath = new ArrayList<Integer>();
       dictionary = new TreeSet<String>();
-   	//dimension = 0.0;
-      validList=new TreeSet<String>();
-   	//foundSet = new TreeSet<String>();
+      validList = new TreeSet<String>();
    }
 
 	/**
@@ -44,7 +46,7 @@ public class Boggle implements WordSearchGame
 	*/
    public void loadLexicon(String fileName){ //tested: working
       if (fileName == null) {
-         throw new IllegalArgumentException("Invalid argument");
+         throw new IllegalArgumentException("Incorrect entry");
       }
       Scanner fileScan;
       Scanner lineScan;
@@ -60,14 +62,9 @@ public class Boggle implements WordSearchGame
             }
          
          }
-         /*dict=new String[dictionary.size()];
-         for (int i=0;i<dictionary.size();i++){
-            dict[i]=(String)dictionary.get(i);
-         }*/
-      
       } 
       catch (IOException e) {
-         throw new IllegalArgumentException("Invalid Parameters");
+         throw new IllegalArgumentException("Incorrect entry");
       }
       fileScan.close();
       lexiconLoaded = true;
@@ -87,31 +84,32 @@ public class Boggle implements WordSearchGame
 	*      not square (i.e. it's the square-root of the length is not 
 	*      a whole number).
 	*/
-   public void setBoard(String[] letterArray){ //tested: working
+   public void setBoard(String[] letterArray){
    	
-      dimension = Math.sqrt(letterArray.length);
-   	//System.out.println("Dimension:::: "+dimension);
-   	
-      if (letterArray==null || dimension != (int)dimension){
-         throw new IllegalArgumentException("Sorry!!");
+      if (letterArray == null) {
+         throw new IllegalArgumentException("Incorrect Entry");
       }
+      
+      dimension = Math.sqrt(letterArray.length);
+   
+   	
+      if (dimension != (int)dimension){
+         throw new IllegalArgumentException("Incorrect Entry");
+      }
+      
+      
       else{
          board = new String[(int)dimension][(int)dimension];
          tries = new Boolean[(int)dimension][(int)dimension];
          int count = 0;
          for (int i=0;i<(int)dimension;i++){
             for (int j=0;j<(int)dimension;j++){
-               board[i][j]=letterArray[count].toLowerCase();
-            	//System.out.println(board[i][j]);
-               tries[i][j]=false;
+               board[i][j] = letterArray[count].toLowerCase();	
+               tries[i][j] = false;
                count++;
             }
          }
       }
-   	
-   	//for (int i=0;i<(int)dimension;i++)
-   		//for (int j=0;j<(int)dimension;j++)
-   		 	//System.out.println(board[i][j]);
    }
 	
 	/**
@@ -126,15 +124,14 @@ public class Boggle implements WordSearchGame
 	* @throws IllegalArgumentException if minimumWordLength < 1
         * @throws IllegalStateException if loadDictionary has not been called.
 	*/
-   public SortedSet getAllValidWords(int minimumWordLength){ //tested: working
-      minLength=minimumWordLength;
-   	//System.out.println("-->");
+   public SortedSet getAllValidWords(int minimumWordLength){
+      minLength = minimumWordLength;
       validList.clear();
       if (minimumWordLength<1){
-         throw new IllegalArgumentException("Please Input a Valid Number!!");
+         throw new IllegalArgumentException("Invalid Number");
       }
-      if(dictionary==null) {
-         throw new IllegalStateException("The Required method's not called yet");
+      if (lexiconLoaded == false) {
+         throw new IllegalStateException("Load Lexicon");
       }
    	//System.out.println("adasda-->"+dimension);
       for(int i=0 ; i<(int)dimension ; i++)
@@ -159,11 +156,11 @@ public class Boggle implements WordSearchGame
 	*/
    public boolean isValidWord(String wordToCheck){ //tested : working
       if (wordToCheck == null) {
-         throw new IllegalArgumentException("word cannot be null");
+         throw new IllegalArgumentException("Invalid word");
       }
       
       if (lexiconLoaded == false) {
-         throw new IllegalStateException("Must load lexicon");
+         throw new IllegalStateException("Load lexicon");
       }
    
       return dictionary.contains(wordToCheck);
@@ -180,11 +177,11 @@ public class Boggle implements WordSearchGame
         */
    public boolean isValidPrefix(String prefixToCheck){ //tested: working
       if (prefixToCheck == null) {
-         throw new IllegalArgumentException("word cannot be null");
+         throw new IllegalArgumentException("Invalid word");
       }
       
       if (lexiconLoaded == false) {
-         throw new IllegalStateException("Must load lexicon");
+         throw new IllegalStateException("Load lexicon");
       }
       
       return dictionary.ceiling(prefixToCheck).startsWith(prefixToCheck);
@@ -202,13 +199,13 @@ public class Boggle implements WordSearchGame
 	* @throws IllegalArgumentException if wordToCheck is null.
         * @throws IllegalStateException if loadDictionary has not been called.
 	*/
-   public List<Integer> isOnBoard(String wordToCheck){ //tested: working
+   public List<Integer> isOnBoard(String wordToCheck){
    
       if(wordToCheck ==null) 
-         throw new IllegalArgumentException("Invalid Parameter");
-      if(dictionary ==null) 
-         throw new IllegalStateException("loadDictionary not called yet");
-   	
+         throw new IllegalArgumentException("Invalid word");
+      if (lexiconLoaded == false) {
+         throw new IllegalStateException("Load lexicon");
+      }
       path.clear();
       finalPath.clear();
    	
@@ -216,10 +213,10 @@ public class Boggle implements WordSearchGame
       {	
          for(int j = 0; j< (int)dimension; j++)
          {
-            if(board[i][j].charAt(0)== wordToCheck.charAt(0)) 
+            if(Character.toUpperCase(board[i][j].charAt(0)) == Character.toUpperCase(wordToCheck.charAt(0))) 
             {
                path.add(i*(int)dimension+j);
-               recursive(wordToCheck,board[i][j],i,j);
+               recursionMethod(wordToCheck,board[i][j],i,j);
                if (!finalPath.isEmpty()) 
                   return finalPath;
                path.clear();
@@ -228,31 +225,7 @@ public class Boggle implements WordSearchGame
          }
       }
       return path;
-   }
-	
-	/**
-	* An optional method that gives a user-defined boggle board to the GUI.
-	* 
-	* @return a String array in the same form as the input to setBoard().
-	*/
-   public String[] getCustomBoard(){ //tested: working
-      String[] letters = {"A","B","I","D","E","K","O","S","U"};
-   	//for (int i=0;i<letters.length;i++)
-   	//System.out.println(letters[i]);
-      return letters;
-   }
-	
-	
-	
-	//this method will check and not let the index to the array 
-	//out of bounds
-   public boolean outOfBounds(int x, int y, int i, int j)
-   {
-      if((x+i)<=((int)dimension-1) && (y+j)<=((int)dimension-1)
-      		&& (x+i)>=0 && (y+j)>=0 && !tries[x+i][y+j])
-         return false;
-      return true; 
-   }
+   }	
 	
 	//In this recursive method, the method takes parameters
 	//the word, and x, and y, the location in the array
@@ -260,9 +233,8 @@ public class Boggle implements WordSearchGame
 	//dictionary
    public void findWord(String word , int x , int y)
    {
-   	//System.out.println("===++++"+word);
+   	
       if(!isValidPrefix(word)) {
-      	//System.out.println("Are we here yet?");
          return;
       }
    	
@@ -275,11 +247,11 @@ public class Boggle implements WordSearchGame
       {
          for (int j=-1;j<=1;j++)
          {
-            if (!outOfBounds(x,y,i,j))
+            if ((x+i)<=((int)dimension-1) && (y+j)<=((int)dimension-1)
+            && (x+i)>=0 && (y+j)>=0 && !tries[x+i][y+j])
             {
                tries[x+i][y+j]=true;
                findWord(word+board[x+i][y+j],x+i,y+j);
-            	//System.out.println("$$#$#$  "+word+board[x+i][y+j]);
                tries[x+i][y+j]=false;
             }
          }
@@ -287,11 +259,11 @@ public class Boggle implements WordSearchGame
       tries[x][y]=false;
    }
 	
-   public void recursive(String wordToCheck, String word, int x, int y){
+   public void recursionMethod(String wordToCheck, String word, int x, int y){
       tries[x][y]=true;
       if (!(isValidPrefix(word)))
          return;
-      if (word.equals(wordToCheck)){
+      if (word.toUpperCase().equals(wordToCheck.toUpperCase())){
          finalPath = new ArrayList(path);
          return;
       }
@@ -301,11 +273,12 @@ public class Boggle implements WordSearchGame
          {
             if(word.equals(wordToCheck)) 
                return;
-            if (!outOfBounds(x,y,i,j))
+            if ((x+i)<=((int)dimension-1) && (y+j)<=((int)dimension-1)
+            && (x+i)>=0 && (y+j)>=0 && !tries[x+i][y+j])
             {
                tries[x+i][y+j]=true;
                path.add((x+i)*(int)dimension+y+j);
-               recursive(wordToCheck,word+board[x+i][y+j],x+i,y+j);
+               recursionMethod(wordToCheck,word+board[x+i][y+j],x+i,y+j);
                tries[x+i][y+j]=false;
                path.remove(path.size()-1);
             }
@@ -318,11 +291,11 @@ public class Boggle implements WordSearchGame
    public int getScoreForWords(SortedSet<String> words, int minimumWordLength) {
    
       if (minimumWordLength < 1) {
-         throw new IllegalArgumentException("min word length must be > 0");
+         throw new IllegalArgumentException("length must be > 0");
       }
       
       if (lexiconLoaded == false) {
-         throw new IllegalStateException("Must load lexicon");
+         throw new IllegalStateException("Load lexicon");
       }
    
       int score = 0;
@@ -348,29 +321,4 @@ public class Boggle implements WordSearchGame
       return result;
    }
 	
-	/*
-	public static void main(String[] args){
-		BogglePlayerImpl testing = new BogglePlayerImpl();
-		
-		testing.loadDictionary("dictionary.txt"); //tests loadDictionary
-		
-		
-		if (testing.isValidWord("totallyRandomWord")==true)
-			System.out.println("word was found in the Dictionary");
-		else
-			System.out.println("word Not Found in the Dictionary");
-		
-		if (testing.isValidPrefix("in")==true)
-			System.out.println("prefix was found in the Dictionary");
-		else
-			System.out.println("PRefix not found in Dictionary");
-		
-		
-		
-		testing.setBoard(testing.getCustomBoard());
-		System.out.println(testing.getAllValidWords(3));
-		//System.out.println(testing.getCustomBoard());
-	}
-	*/
-
 }

@@ -181,7 +181,8 @@ public class Boggle implements WordSearchGame {
          for (int j = 0; j < length; j++) {
             if (Character.toUpperCase(board[i][j].charAt(0))
                == Character.toUpperCase(wordToCheck.charAt(0))) {
-               path.add(j + (i * length));
+               int value = j + (i * length);
+               path.add(value);
                recursion(wordToCheck, board[i][j], i, j);
                if (!actualPath.isEmpty()) {
                   return actualPath;
@@ -252,7 +253,8 @@ public class Boggle implements WordSearchGame {
                && (y + j) <= (length - 1)
                && (x + i) >= 0 && (y + j) >= 0 && !visited[x + i][y + j]) {
                visited[x + i][y + j] = true;
-               path.add((x + i) * length + y + j);
+               int value = (x + i) * length + y + j;
+               path.add(value);
                recursion(wordToCheck, current
                   + board[x + i][y + j], x + i, y + j);
                visited[x + i][y + j] = false;

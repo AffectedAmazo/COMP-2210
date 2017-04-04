@@ -1,5 +1,4 @@
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -27,14 +26,14 @@ public class Boggle implements WordSearchGame {
 * The constructor for Boggle.
 */
    public Boggle() {
-      path = new ArrayList<Integer>();
-      actualPath = new ArrayList<Integer>();
       lexicon = new TreeSet<String>();
+      path = new ArrayList<Integer>();
       vaildWords = new TreeSet<String>();
+      actualPath = new ArrayList<Integer>();
    }
 
 /**
-* Loads the lexicon. 
+* Loads the lexicon.
 * @param fileName is the file title to be loaded.
 * @throws IllegalArgumentException if fileName is null or cant be loaded.
 */
@@ -57,7 +56,7 @@ public class Boggle implements WordSearchGame {
          
          }
       } 
-      catch (IOException e) {
+      catch (Exception e) {
          throw new IllegalArgumentException("Incorrect entry");
       }
    
@@ -88,8 +87,8 @@ public class Boggle implements WordSearchGame {
          int count = 0;
          for (int i = 0; i < length; i++) {
             for (int j = 0; j < length; j++) {
-               board[i][j] = letterArray[count].toLowerCase();
                visited[i][j] = false;
+               board[i][j] = letterArray[count].toLowerCase();
                count++;
             }
          }
@@ -115,7 +114,7 @@ public class Boggle implements WordSearchGame {
       
       for (int i = 0; i < length; i++) {
          for (int j = 0; j < length; j++) {
-            findWord(board[i][j], i, j);
+            locateWord(board[i][j], i, j);
          }
       }
       return vaildWords;
@@ -137,7 +136,7 @@ public class Boggle implements WordSearchGame {
          throw new IllegalArgumentException("Invalid word");
       }
    
-      return lexicon.contains(wordToCheck);
+      return lexicon.contains(wordToCheck.toLowerCase());
    }
 
 /**
@@ -182,8 +181,8 @@ public class Boggle implements WordSearchGame {
          for (int j = 0; j < length; j++) {
             if (Character.toUpperCase(board[i][j].charAt(0))
                == Character.toUpperCase(wordToCheck.charAt(0))) {
-               path.add(i * length + j);
-               recursionMethod(wordToCheck, board[i][j], i, j);
+               path.add(j + (i * length));
+               recursion(wordToCheck, board[i][j], i, j);
                if (!actualPath.isEmpty()) {
                   return actualPath;
                }
@@ -201,7 +200,7 @@ public class Boggle implements WordSearchGame {
 * @param x is the x value of the word.
 * @param y is the y value of the word.
 */
-   public void findWord(String word, int x, int y) {
+   public void locateWord(String word, int x, int y) {
    
       if (!isValidPrefix(word)) {
          return;
@@ -219,7 +218,7 @@ public class Boggle implements WordSearchGame {
                && (y + j) <= ((int) length - 1)
                && (x + i) >= 0 && (y + j) >= 0 && !visited[x + i][y + j]) {
                visited[x + i][y + j] = true;
-               findWord(word + board[x + i][y + j], x + i, y + j);
+               locateWord(word + board[x + i][y + j], x + i, y + j);
                visited[x + i][y + j] = false;
             }
          }
@@ -230,23 +229,23 @@ public class Boggle implements WordSearchGame {
 /**
 * This method is the recursion for isOnBoard.
 * @param wordToCheck is the word to check.
-* @param word is the current word your're using.
+* @param current is the current word your're using.
 * @param x is the current x value.
 * @param y is the current y value.
 */
-   public void recursionMethod(String wordToCheck, String word, int x, int y) {
+   public void recursion(String wordToCheck, String current, int x, int y) {
    
       visited[x][y] = true;
-      if (!(isValidPrefix(word))) {
+      if (!(isValidPrefix(current))) {
          return;
       }
-      if (word.toUpperCase().equals(wordToCheck.toUpperCase())) {
+      if (current.toUpperCase().equals(wordToCheck.toUpperCase())) {
          actualPath = new ArrayList(path);
          return;
       }
       for (int i = -1; i <= 1; i++) {
          for (int j = -1; j <= 1; j++) {
-            if (word.equals(wordToCheck)) {
+            if (current.equals(wordToCheck)) {
                return;
             }
             if ((x + i) <= (length - 1)
@@ -254,7 +253,7 @@ public class Boggle implements WordSearchGame {
                && (x + i) >= 0 && (y + j) >= 0 && !visited[x + i][y + j]) {
                visited[x + i][y + j] = true;
                path.add((x + i) * length + y + j);
-               recursionMethod(wordToCheck, word
+               recursion(wordToCheck, current
                   + board[x + i][y + j], x + i, y + j);
                visited[x + i][y + j] = false;
                path.remove(path.size() - 1);
